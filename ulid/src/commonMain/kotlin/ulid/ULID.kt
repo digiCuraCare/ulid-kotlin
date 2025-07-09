@@ -1,13 +1,18 @@
+@file:OptIn(ExperimentalUuidApi::class)
+
 package ulid
 
 import kotlinx.serialization.Serializable
 import ulid.internal.ULIDAsStringSerializer
+import ulid.internal.ULIDConverter.Companion.DefaultConverter
 import ulid.internal.ULIDFactory
 import ulid.internal.ULIDFactory.Companion.Default
 import ulid.internal.ULIDMonotonic
 import ulid.internal.ULIDMonotonic.Companion.DefaultMonotonic
 import ulid.internal.currentTimeMillis
 import kotlin.random.Random
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 /**
  * Universally Unique Lexicographically Sortable Identifier.
@@ -70,6 +75,25 @@ public interface ULID : Comparable<ULID> {
          * Generate a [ULID] from given [ulidString].
          */
         public fun parseULID(ulidString: String): ULID
+    }
+
+    /**
+     * [ULID] converter.
+     */
+    public interface Converter {
+        /**
+         * Generate a [ULID] from given Uuid.
+         *
+         * @param uuid A kotlin Uuid
+         */
+        public fun fromUuid(uuid: Uuid): ULID
+
+        /**
+         * Return this [ULID] as [ulidString].
+         */
+        public fun toUuid(ulid: ULID): Uuid
+
+        public companion object : Converter by DefaultConverter
     }
 
     /**
